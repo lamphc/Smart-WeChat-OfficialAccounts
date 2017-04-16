@@ -6,6 +6,7 @@ let path = require('path')
 let util = require('./libs/util')
 let accessToken_file = path.join(__dirname, './config/access_token.txt')
 
+//内网穿透：$ lt -s mengxwechat -p 1234
 let config = {
     //lamphc accounts info
     wechat: {
