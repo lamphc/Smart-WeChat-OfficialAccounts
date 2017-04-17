@@ -1,5 +1,7 @@
 let request = require('request-promise')
 
+let util = require('../libs/util')
+
 let wechat_api = {
     prefix: 'https://api.weixin.qq.com/cgi-bin/',
     url: {
@@ -54,14 +56,24 @@ class WeChat {
     updateAccessToken() {
         let url = `${wechat_api.prefix}${wechat_api.url.access_token}&appid=${this.appID}&secret=${this.appSecret}`
         return new Promise((resolve, reject) => {
-            request({ url: url, json: true }).then((res) => {
-                console.log('Get access_token:',res)
+            request({url: url, json: true}).then((res) => {
+                console.log('Get access_token:', res)
                 let _data = res
                 let expires_in = (new Date().getTime()) + (_data.expires_in - 20) * 1000
                 _data.expires_in = expires_in
                 resolve(_data)
             })
         })
+    }
+
+    reply() {
+        let content = this.body
+        let message = this.wechatMessage
+        let xml = util.tpl(content, message)
+        this.status = 200
+        this.type = 'application/xml'
+        this.body = xml
+
     }
 
 

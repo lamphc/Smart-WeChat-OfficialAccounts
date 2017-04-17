@@ -1,6 +1,8 @@
 let fs = require('fs')
 let xml2js = require('xml2js')
 
+let tpl = require('../wechat/tpl')
+
 let rw = {
     readFileAsync(fpath, encoding) {
         return new Promise((resolve, reject) => {
@@ -21,7 +23,7 @@ let rw = {
     //xml format
     parseXMLAsync(xml) {
         return new Promise((resolve, reject) => {
-            xml2js.parseString(xml, { trim: true }, (err, data) => {
+            xml2js.parseString(xml, {trim: true}, (err, data) => {
                 if (err) reject(err)
                 else resolve(data)
             })
@@ -29,26 +31,26 @@ let rw = {
     },
     formatMessage(data) {
         let message = {}
-        if(typeof data === 'object') {
+        if (typeof data === 'object') {
             let keys = Object.keys(data)
 
-            for(let i=0,j = keys.length;i<j;i++) {
+            for (let i = 0, j = keys.length; i < j; i++) {
                 let item = data[keys[i]]
                 let key = keys[i]
-                if(!Array.isArray(item) || item.length === 0) {
+                if (!Array.isArray(item) || item.length === 0) {
                     continue
                 }
-                if(item.length === 1) {
+                if (item.length === 1) {
                     let val = item[0]
-                    if(typeof val === 'object') {
+                    if (typeof val === 'object') {
                         message[key] = rw.formatMessage(val)
                     }
                     else {
                         message[key] = (val || '').trim()
                     }
-                }else {
+                } else {
                     message[key] = []
-                    for(let m=0,k=item.length;m<k;m++) {
+                    for (let m = 0, k = item.length; m < k; m++) {
                         message[key].push(rw.formatMessage(item[m]))
                     }
 
@@ -62,3 +64,21 @@ let rw = {
 }
 
 module.exports = rw
+
+module.exports.tpl = function (content, message) {
+    let tplData = {}
+    let type = 'text'
+    if (Array.isArray(content)) {
+        type = 'news'
+    }
+    type = content.type || type
+    tplData = {
+        content: content,
+        createTime: new Date().getTime(),
+        msgType: type,
+        toUserName: message.fromUserName,
+        fromUserName:message.toUserName
+    }
+    return tpl.compiled(tplData)
+
+}

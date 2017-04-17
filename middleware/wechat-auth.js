@@ -3,7 +3,7 @@ let rawBody = require('raw-body')
 let util = require('../libs/util')
 let WeChat = require('../wechat/wapi')
 
-module.exports = function (opt) {
+module.exports = function (opt, reply) {
     let wechat = new WeChat(opt)
 
     return function* (next) {
@@ -35,34 +35,37 @@ module.exports = function (opt) {
 
             let message = util.formatMessage(data_fwx.xml)
             console.log(message)
+            this.wechatMessage = message
+            yield handler.call(this, next)
+            reply.call(this)
             //微信返回数据业务操作
-            let now = new Date().getTime()
-            let res = '直播：http://v.youku.com/v_show/id_XMjY5NTE4MjgwNA==.html?spm=a2hww.20023042.m_223837.5~5!2~5~5!3~5~1!2~3~A&from=y1.3-idx-beta-1519-23042.223837.3-2'
-            if (message.MsgType === 'event') {
-                if (message.Event === 'subscribe') {
-                    this.status = 200
-                    this.type = 'application/xml'
-                    this.body = `<xml>
-                                <ToUserName><![CDATA[${message.FromUserName}]]></ToUserName>
-                                <FromUserName><![CDATA[${message.ToUserName}]]></FromUserName>
-                                <CreateTime>${now}</CreateTime>
-                                <MsgType><![CDATA[text]]></MsgType>
-                                <Content><![CDATA[${res}]]></Content>
-                                </xml>`
-                    return
-                }
-            } else if (message.MsgType === 'text') {
-                this.status = 200
-                this.type = 'application/xml'
-                this.body = `<xml>
-                                <ToUserName><![CDATA[${message.FromUserName}]]></ToUserName>
-                                <FromUserName><![CDATA[${message.ToUserName}]]></FromUserName>
-                                <CreateTime>${now}</CreateTime>
-                                <MsgType><![CDATA[text]]></MsgType>
-                                <Content><![CDATA[${res}]]></Content>
-                                </xml>`
-                return
-            }
+            // let now = new Date().getTime()
+            // let res = '直播：http://v.youku.com/v_show/id_XMjY5NTE4MjgwNA==.html?spm=a2hww.20023042.m_223837.5~5!2~5~5!3~5~1!2~3~A&from=y1.3-idx-beta-1519-23042.223837.3-2'
+            // if (message.MsgType === 'event') {
+            //     if (message.Event === 'subscribe') {
+            //         this.status = 200
+            //         this.type = 'application/xml'
+            //         this.body = `<xml>
+            //                     <ToUserName><![CDATA[${message.FromUserName}]]></ToUserName>
+            //                     <FromUserName><![CDATA[${message.ToUserName}]]></FromUserName>
+            //                     <CreateTime>${now}</CreateTime>
+            //                     <MsgType><![CDATA[text]]></MsgType>
+            //                     <Content><![CDATA[${res}]]></Content>
+            //                     </xml>`
+            //         return
+            //     }
+            // } else if (message.MsgType === 'text') {
+            //     this.status = 200
+            //     this.type = 'application/xml'
+            //     this.body = `<xml>
+            //                     <ToUserName><![CDATA[${message.FromUserName}]]></ToUserName>
+            //                     <FromUserName><![CDATA[${message.ToUserName}]]></FromUserName>
+            //                     <CreateTime>${now}</CreateTime>
+            //                     <MsgType><![CDATA[text]]></MsgType>
+            //                     <Content><![CDATA[${res}]]></Content>
+            //                     </xml>`
+            //     return
+            // }
 
 
         }
