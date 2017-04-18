@@ -65,7 +65,7 @@ let rw = {
 
 module.exports = rw
 
-module.exports.tpl = function (content, message) {
+    module.exports.tpl = function (content, message) {
     let tplData = {}
     let type = 'text'
     if (Array.isArray(content)) {
@@ -76,8 +76,8 @@ module.exports.tpl = function (content, message) {
         content: content,
         createTime: new Date().getTime(),
         msgType: type,
-        toUserName: message.fromUserName,
-        fromUserName:message.toUserName
+        toUserName: message.FromUserName,
+        fromUserName:message.ToUserName
     }
     return tpl.compiled(tplData)
 

@@ -28,7 +28,7 @@ class WeChat {
             }
 
             if (this.isValidAccessToken(_data)) {
-                Promise.resolve(_data)
+              return Promise.resolve(_data)
             } else {
                 return this.updateAccessToken()
             }
@@ -69,6 +69,9 @@ class WeChat {
     reply() {
         let content = this.body
         let message = this.wechatMessage
+
+        console.log('had:', content, message)
+
         let xml = util.tpl(content, message)
         this.status = 200
         this.type = 'application/xml'

@@ -3,7 +3,7 @@ let rawBody = require('raw-body')
 let util = require('../libs/util')
 let WeChat = require('../wechat/wapi')
 
-module.exports = function (opt, reply) {
+module.exports = function (opt, handler) {
     let wechat = new WeChat(opt)
 
     return function* (next) {
@@ -37,7 +37,7 @@ module.exports = function (opt, reply) {
             console.log(message)
             this.wechatMessage = message
             yield handler.call(this, next)
-            reply.call(this)
+            wechat.reply.call(this)
             //微信返回数据业务操作
             // let now = new Date().getTime()
             // let res = '直播：http://v.youku.com/v_show/id_XMjY5NTE4MjgwNA==.html?spm=a2hww.20023042.m_223837.5~5!2~5~5!3~5~1!2~3~A&from=y1.3-idx-beta-1519-23042.223837.3-2'
